@@ -1,20 +1,39 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import LogoutButton from '@/components/LogoutButton'
+import SetupWizard from './SetupWizard'
 
-export default async function SetupPage() {
+export default async function SetupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ add?: string }>
+}) {
+  const { add } = await searchParams
+  const addingAnother = add === '1'
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const [familyResult, instructorsResult, inviteResult] = await Promise.all([
+    supabase.from('families').select('id, setup_complete, parent_first_name, parent_last_name, parent_phone').eq('profile_id', user.id).maybeSingle(),
+    supabase.from('instructors').select('id, first_name, last_name').eq('active', true).order('first_name'),
+    supabase.from('invites').select('student_first_name, instrument').eq('email', user.email ?? '').eq('used', false).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+  ])
+
+  const family = familyResult.data
+
+  // Already set up and not explicitly adding another student → portal
+  if (family?.setup_complete && !addingAnother) redirect('/portal')
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="text-center">
-        <div className="text-4xl mb-4">👋</div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Let&apos;s get you set up</h1>
-        <p className="text-gray-500 text-sm mb-1">Logged in as</p>
-        <p className="text-gray-700 text-sm font-medium mb-8">{user?.email}</p>
-        <p className="text-xs text-gray-400 mb-6">Account setup coming soon…</p>
-        <LogoutButton />
-      </div>
-    </main>
+    <SetupWizard
+      profileId={user.id}
+      userEmail={user.email ?? ''}
+      existingFamily={family ?? null}
+      instructors={instructorsResult.data ?? []}
+      prefillFirstName={inviteResult.data?.student_first_name ?? null}
+      prefillInstrument={inviteResult.data?.instrument ?? null}
+      addingAnother={addingAnother}
+    />
   )
 }

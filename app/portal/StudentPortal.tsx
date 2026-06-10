@@ -251,7 +251,13 @@ export default function StudentPortal({
         {/* ── 6. Badge Wall ── */}
         <BadgeWall allBadges={allBadges} earnedBadgeIds={student.earnedBadgeIds} />
 
-        <div className="text-center pt-4">
+        <div className="text-center pt-4 space-y-3">
+          <a
+            href="/setup?add=1"
+            className="block text-sm font-bold text-orange-600 hover:text-orange-700"
+          >
+            ➕ Add another student
+          </a>
           <LogoutButton />
         </div>
       </div>
