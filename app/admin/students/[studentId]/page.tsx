@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { computeRiskFlags, riskLevel } from '@/lib/risk'
 import LessonForm from '@/app/instructor/[studentId]/LessonForm'
+import { badgeImageUrl } from '@/lib/badgeArt'
 
 function journeyDay(journeyStartDate: string | null): number | null {
   if (!journeyStartDate) return null
@@ -177,8 +178,14 @@ export default async function AdminStudentDetailPage({
                 const badge = badgeMap.get(e.badge_id)
                 return (
                   <li key={i} className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 text-sm">
-                    <span className="font-bold text-gray-700">
-                      {badge?.emoji} {badge?.name ?? 'Unknown badge'}
+                    <span className="font-bold text-gray-700 flex items-center gap-2">
+                      {badge && badgeImageUrl(badge.name) ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={badgeImageUrl(badge.name)!} alt="" className="w-7 h-7" />
+                      ) : (
+                        <span>{badge?.emoji}</span>
+                      )}
+                      {badge?.name ?? 'Unknown badge'}
                     </span>
                     <span className="text-xs text-gray-400">{fmtDate(e.awarded_at)}</span>
                   </li>

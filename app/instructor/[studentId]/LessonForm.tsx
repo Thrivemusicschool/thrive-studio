@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { badgeImageUrl } from '@/lib/badgeArt'
 
 interface Badge {
   id: string
@@ -179,9 +180,19 @@ export default function LessonForm({ studentId, instructorId, allBadges, earnedB
                       : 'bg-white border-gray-200 hover:border-indigo-300 hover:shadow-sm'
                   }`}
                 >
-                  <span className="text-2xl leading-none flex-shrink-0" style={{ filter: earned ? 'grayscale(1)' : 'none' }}>
-                    {badge.emoji}
-                  </span>
+                  {badgeImageUrl(badge.name) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={badgeImageUrl(badge.name)!}
+                      alt=""
+                      className="w-11 h-11 flex-shrink-0"
+                      style={{ filter: earned ? 'grayscale(1)' : 'none' }}
+                    />
+                  ) : (
+                    <span className="text-2xl leading-none flex-shrink-0" style={{ filter: earned ? 'grayscale(1)' : 'none' }}>
+                      {badge.emoji}
+                    </span>
+                  )}
                   <span className="min-w-0 flex-1">
                     <span className={`block text-sm font-black leading-tight ${earned ? 'text-gray-400' : 'text-gray-800'}`}>
                       {badge.name} {earned && '✓'}

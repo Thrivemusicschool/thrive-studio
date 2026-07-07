@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Badge } from './types'
+import { badgeImageUrl } from '@/lib/badgeArt'
 
 const LEVEL_STYLE: Record<
   Badge['level'],
@@ -46,12 +47,22 @@ export default function BadgeWall({
                   : 'bg-gray-100 border-gray-200'
               }`}
             >
-              <span
-                className="text-2xl leading-none mb-1"
-                style={{ filter: isEarned ? 'none' : 'grayscale(1)', opacity: isEarned ? 1 : 0.4 }}
-              >
-                {badge.emoji}
-              </span>
+              {badgeImageUrl(badge.name) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={badgeImageUrl(badge.name)!}
+                  alt=""
+                  className="w-12 h-12 mb-1"
+                  style={{ filter: isEarned ? 'none' : 'grayscale(1)', opacity: isEarned ? 1 : 0.45 }}
+                />
+              ) : (
+                <span
+                  className="text-2xl leading-none mb-1"
+                  style={{ filter: isEarned ? 'none' : 'grayscale(1)', opacity: isEarned ? 1 : 0.4 }}
+                >
+                  {badge.emoji}
+                </span>
+              )}
               {!isEarned && (
                 <span className="absolute top-1 right-1 text-[9px]">🔒</span>
               )}
@@ -84,12 +95,22 @@ export default function BadgeWall({
               return (
                 <>
                   <div className="text-center mb-4">
-                    <span
-                      className="text-5xl leading-none"
-                      style={{ filter: isEarned ? 'none' : 'grayscale(1)', opacity: isEarned ? 1 : 0.5 }}
-                    >
-                      {selected.emoji}
-                    </span>
+                    {badgeImageUrl(selected.name) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={badgeImageUrl(selected.name)!}
+                        alt=""
+                        className="w-28 h-28 mx-auto"
+                        style={{ filter: isEarned ? 'none' : 'grayscale(1)', opacity: isEarned ? 1 : 0.5 }}
+                      />
+                    ) : (
+                      <span
+                        className="text-5xl leading-none"
+                        style={{ filter: isEarned ? 'none' : 'grayscale(1)', opacity: isEarned ? 1 : 0.5 }}
+                      >
+                        {selected.emoji}
+                      </span>
+                    )}
                     <h3 className={`mt-2 font-black text-xl ${isEarned ? style.text : 'text-gray-400'}`}>
                       {selected.name}
                     </h3>

@@ -30,7 +30,11 @@
       "Bash(git commit -q -m 'Admin: internal notes feed for last 7 days *)",
       "Bash(perl -pi -e \"s/'First Song'/'Piece Beginner'/g; s/firstSongBadgeId/firstPieceBadgeId/g; s/firstSongStudents/firstPieceStudents/g; s/hasFirstSongBadge/hasFirstPieceBadge/g\" app/admin/page.tsx \"app/admin/students/[studentId]/page.tsx\")",
       "Bash(git commit -q -m 'Badge system v2: 20 real badges, tiered levels, redesigned award UI *)",
-      "Bash(git commit -q -m 'Remove refer-a-friend card from portal for now *)"
+      "Bash(git commit -q -m 'Remove refer-a-friend card from portal for now *)",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "Bash(node /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/gen-badges.js)",
+      "Bash(git commit -q -m 'Custom SVG badge artwork: 20 medallion and shield designs *)"
     ]
   }
 }
