@@ -29,3 +29,11 @@ h3 {
   font-family: var(--font-fredoka), var(--font-inter), sans-serif;
   letter-spacing: 0.01em;
 }
+
+/* Mobile: never allow the page itself to pan sideways — inner sections
+   that need it (tables, tab rows) manage their own overflow-x */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}

@@ -1,6 +1,12 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Fredoka, Inter } from 'next/font/google'
 import './globals.css'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#263A6E',
+}
 
 const fredoka = Fredoka({
   variable: '--font-fredoka',
