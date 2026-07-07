@@ -103,11 +103,15 @@ export default async function InstructorPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-indigo-700 text-white px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold">🎵 Thrive Studio</h1>
-          <p className="text-indigo-200 text-sm">
-            {instructor.first_name} {instructor.last_name} · Instructor
-          </p>
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/thrive-logo.png" alt="" className="h-12 w-12 object-contain" />
+          <div>
+            <h1 className="text-xl font-bold">Thrive Studio</h1>
+            <p className="text-indigo-200 text-sm">
+              {instructor.first_name} {instructor.last_name} · Instructor
+            </p>
+          </div>
         </div>
         <LogoutButton />
       </header>

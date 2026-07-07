@@ -34,7 +34,13 @@
       "mcp__visualize__read_me",
       "mcp__visualize__show_widget",
       "Bash(node /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/gen-badges.js)",
-      "Bash(git commit -q -m 'Custom SVG badge artwork: 20 medallion and shield designs *)"
+      "Bash(git commit -q -m 'Custom SVG badge artwork: 20 medallion and shield designs *)",
+      "Bash(curl -sL \"https://thrivemusicschool.com\" -o /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/site.html -w \"HTTP %{http_code}, final URL: %{url_effective}\\\\n\")",
+      "Bash(curl -sL https://images.squarespace-cdn.com/content/v1/6660d621f1543539a256c0b9/a6451883-8737-45fe-80b2-d97f8df99ace/Thrive+Logo+%281%29.png?format=1500w -o /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/thrive-logo.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/thrive-logo.png)",
+      "Bash(sips -s format bmp /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/thrive-logo.png --out /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/logo.bmp)",
+      "Bash(python3 -)",
+      "Bash(git commit -q -m 'Branding: Thrive logo, brand navy/orange palette, Fredoka+Inter fonts, T-note app icon, PWA manifest *)"
     ]
   }
 }

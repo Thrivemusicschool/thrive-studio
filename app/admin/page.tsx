@@ -112,9 +112,13 @@ export default async function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-indigo-700 text-white px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold">🎵 Thrive Studio</h1>
-          <p className="text-indigo-200 text-sm">Admin Dashboard</p>
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/thrive-logo.png" alt="" className="h-12 w-12 object-contain" />
+          <div>
+            <h1 className="text-xl font-bold">Thrive Studio</h1>
+            <p className="text-indigo-200 text-sm">Admin Dashboard</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <Link

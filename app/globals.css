@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-fredoka);
+}
+
+@theme {
+  /* Thrive brand palette — navy from the logo circle replaces Tailwind's
+     indigo, orange tuned to the logo's exact #FF914D */
+  --color-indigo-50: #eef1f8;
+  --color-indigo-100: #dde3f1;
+  --color-indigo-200: #b9c4e2;
+  --color-indigo-300: #8fa0ce;
+  --color-indigo-400: #5f76b2;
+  --color-indigo-500: #3d5493;
+  --color-indigo-600: #2e4378;
+  --color-indigo-700: #263a6e;
+  --color-indigo-800: #1e2e58;
+  --color-indigo-900: #172343;
+  --color-orange-400: #ffa76b;
+  --color-orange-500: #ff914d;
+  --color-orange-600: #f0782e;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-fredoka), var(--font-inter), sans-serif;
+  letter-spacing: 0.01em;
 }

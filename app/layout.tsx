@@ -1,9 +1,14 @@
 import type { Metadata } from 'next'
-import { Geist } from 'next/font/google'
+import { Fredoka, Inter } from 'next/font/google'
 import './globals.css'
 
-const geist = Geist({
-  variable: '--font-geist-sans',
+const fredoka = Fredoka({
+  variable: '--font-fredoka',
+  subsets: ['latin'],
+})
+
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 })
 
@@ -14,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geist.variable} h-full antialiased`}>
+    <html lang="en" className={`${fredoka.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full font-sans">{children}</body>
     </html>
   )
