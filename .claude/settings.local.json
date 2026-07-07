@@ -26,7 +26,8 @@
       "Bash(npm run *)",
       "Bash(git add *)",
       "Bash(git commit -q -m 'Session 6: password-only login, referral card, instructor invites, admin lesson logging *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git commit -q -m 'Admin: internal notes feed for last 7 days *)"
     ]
   }
 }

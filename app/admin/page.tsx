@@ -28,7 +28,7 @@ export default async function AdminPage() {
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-  const [studentsRes, instructorsRes, lessonsRes, practiceRes, badgesRes, studentBadgesRes, invitesRes] =
+  const [studentsRes, instructorsRes, lessonsRes, practiceRes, badgesRes, studentBadgesRes, invitesRes, notesRes] =
     await Promise.all([
       supabase.from('students').select('id, first_name, last_name, instrument, instructor_id, journey_start_date, created_at').eq('active', true).order('first_name'),
       supabase.from('instructors').select('id, first_name, last_name, email, active, profile_id').order('first_name'),
@@ -37,6 +37,7 @@ export default async function AdminPage() {
       supabase.from('badges').select('id, name'),
       supabase.from('student_badges').select('student_id, badge_id'),
       supabase.from('invites').select('id, email, student_first_name, created_at').eq('used', false).order('created_at', { ascending: false }),
+      supabase.from('lessons').select('id, student_id, instructor_id, internal_note, lesson_date, created_at').not('internal_note', 'is', null).gte('created_at', sevenDaysAgo.toISOString()).order('created_at', { ascending: false }).limit(25),
     ])
 
   const students = studentsRes.data ?? []
@@ -51,6 +52,7 @@ export default async function AdminPage() {
   )
 
   const instructorName = new Map(instructors.map(i => [i.id, `${i.first_name} ${i.last_name}`]))
+  const recentNotes = notesRes.data ?? []
 
   // Last lesson + last goal date per student (lessons are sorted desc)
   const lastLesson = new Map<string, string>()
@@ -137,6 +139,41 @@ export default async function AdminPage() {
             </div>
           ))}
         </div>
+
+        {/* ── Internal notes feed (last 7 days) ── */}
+        <section className="bg-white rounded-2xl border-2 border-dashed border-red-200 p-6">
+          <h2 className="text-lg font-black text-gray-800 mb-1">🔒 Internal Notes — Last 7 Days</h2>
+          <p className="text-xs text-gray-400 mb-4">School only. Never visible to families.</p>
+          {recentNotes.length === 0 ? (
+            <p className="text-gray-400 text-sm">No internal notes in the past week.</p>
+          ) : (
+            <div className="space-y-3">
+              {recentNotes.map(note => {
+                const student = students.find(s => s.id === note.student_id)
+                return (
+                  <div key={note.id} className="bg-red-50 rounded-xl px-4 py-3">
+                    <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1">
+                      <span className="text-sm font-black text-gray-800">
+                        {student ? (
+                          <Link href={`/admin/students/${student.id}`} className="hover:underline text-indigo-700">
+                            {student.first_name} {student.last_name}
+                          </Link>
+                        ) : (
+                          'Former student'
+                        )}
+                        {note.instructor_id && (
+                          <span className="text-gray-400 font-medium"> · {instructorName.get(note.instructor_id) ?? 'Unknown instructor'}</span>
+                        )}
+                      </span>
+                      <span className="text-xs text-gray-400">{fmtDate(note.lesson_date)}</span>
+                    </div>
+                    <p className="text-sm text-red-800">{note.internal_note}</p>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </section>
 
         {/* ── Student table ── */}
         <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
