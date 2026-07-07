@@ -50,7 +50,8 @@
       "Bash(git commit -q -m 'Make manifest and app icons public in auth proxy *)",
       "Bash(python3 -c \"import time; time.sleep\\(55\\)\")",
       "Bash(curl -s -o /dev/null -w \"apple-icon: %{http_code}\\\\n\" \"https://thrive-studio.vercel.app/apple-icon\")",
-      "Bash(git commit -q -m 'Minimalist Ts icon, fix mobile horizontal scroll, mobile theme color *)"
+      "Bash(git commit -q -m 'Minimalist Ts icon, fix mobile horizontal scroll, mobile theme color *)",
+      "Bash(git commit -q -m 'Stronger mobile scroll fix \\(overflow clip\\) + wrap-safe headers *)"
     ]
   }
 }

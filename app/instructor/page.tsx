@@ -102,7 +102,7 @@ export default async function InstructorPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-indigo-700 text-white px-6 py-4 flex items-center justify-between">
+      <header className="bg-indigo-700 text-white px-4 sm:px-6 py-4 flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/thrive-logo.png" alt="" className="h-12 w-12 object-contain" />

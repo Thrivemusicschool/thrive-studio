@@ -36,4 +36,6 @@ html,
 body {
   max-width: 100%;
   overflow-x: hidden;
+  /* iOS Safari ignores overflow-x:hidden for page panning; clip works */
+  overflow-x: clip;
 }
