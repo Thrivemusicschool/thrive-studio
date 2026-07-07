@@ -11,7 +11,7 @@ export interface RiskInput {
   lastLessonDate: string | null
   lastGoalDate: string | null
   lastPracticeDate: string | null
-  hasFirstSongBadge: boolean
+  hasFirstPieceBadge: boolean
 }
 
 function daysSince(dateStr: string): number {
@@ -43,8 +43,8 @@ export function computeRiskFlags(input: RiskInput): RiskFlag[] {
   if (accountAge > 14 && (!input.lastGoalDate || daysSince(input.lastGoalDate) >= 14)) {
     flags.push({ level: 'yellow', reason: 'No instructor goal set in 14 days' })
   }
-  if ((input.journeyDay ?? 0) > 35 && !input.hasFirstSongBadge) {
-    flags.push({ level: 'yellow', reason: 'Past Day 35 with no First Song badge' })
+  if ((input.journeyDay ?? 0) > 35 && !input.hasFirstPieceBadge) {
+    flags.push({ level: 'yellow', reason: 'Past Day 35 with no Piece Beginner badge' })
   }
 
   return flags

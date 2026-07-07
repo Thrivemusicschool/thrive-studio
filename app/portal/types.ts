@@ -1,9 +1,13 @@
+export type BadgeLevel =
+  | 'spark' | 'groove' | 'legend'
+  | 'bronze' | 'silver' | 'gold' | 'allstar'
+
 export interface Badge {
   id: string
   name: string
   emoji: string
   family: string
-  level: 'spark' | 'groove' | 'legend'
+  level: BadgeLevel
   description: string
 }
 

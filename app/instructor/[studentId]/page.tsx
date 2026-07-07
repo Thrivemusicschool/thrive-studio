@@ -61,7 +61,7 @@ export default async function StudentDetailPage({
       .select('duration_minutes')
       .eq('student_id', studentId)
       .gte('start_time', sevenDaysAgo.toISOString()),
-    supabase.from('badges').select('*').order('level'),
+    supabase.from('badges').select('*').order('sort_order'),
     supabase.from('student_badges').select('badge_id').eq('student_id', studentId),
   ])
 

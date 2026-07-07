@@ -21,9 +21,13 @@ interface Props {
 }
 
 const LEVEL_COLORS: Record<string, string> = {
-  spark:  'bg-blue-100 border-blue-300 text-blue-700',
-  groove: 'bg-purple-100 border-purple-300 text-purple-700',
-  legend: 'bg-amber-100 border-amber-300 text-amber-700',
+  spark:   'bg-blue-100 border-blue-300 text-blue-700',
+  groove:  'bg-purple-100 border-purple-300 text-purple-700',
+  legend:  'bg-amber-100 border-amber-300 text-amber-700',
+  bronze:  'bg-orange-100 border-orange-300 text-orange-800',
+  silver:  'bg-slate-100 border-slate-300 text-slate-600',
+  gold:    'bg-yellow-100 border-yellow-400 text-yellow-700',
+  allstar: 'bg-fuchsia-100 border-fuchsia-300 text-fuchsia-700',
 }
 
 export default function LessonForm({ studentId, instructorId, allBadges, earnedBadgeIds, returnTo = '/instructor' }: Props) {
@@ -146,36 +150,60 @@ export default function LessonForm({ studentId, instructorId, allBadges, earnedB
 
       {/* Award a Badge */}
       <div>
-        <label className="block text-sm font-black text-gray-700 mb-3">Award a Badge</label>
-        <div className="flex flex-wrap gap-2">
-          {allBadges.map(badge => {
-            const earned = alreadyEarned.has(badge.id)
-            const selected = selectedBadgeIds.has(badge.id)
-            const levelStyle = LEVEL_COLORS[badge.level] ?? LEVEL_COLORS.spark
+        <label className="block text-sm font-black text-gray-700 mb-1">Award a Badge</label>
+        <p className="text-xs text-gray-400 mb-3">
+          Tap to select — awarded when you save. Grayed-out badges are already earned.
+        </p>
+        {allBadges.length === 0 ? (
+          <p className="text-sm text-yellow-800 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
+            No badges found — the badge list hasn&apos;t been loaded into the database yet.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {allBadges.map(badge => {
+              const earned = alreadyEarned.has(badge.id)
+              const selected = selectedBadgeIds.has(badge.id)
+              const levelStyle = LEVEL_COLORS[badge.level] ?? LEVEL_COLORS.spark
 
-            return (
-              <button
-                key={badge.id}
-                type="button"
-                onClick={() => toggleBadge(badge.id)}
-                title={badge.description}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full border-2 text-sm font-bold transition-all ${
-                  earned
-                    ? `${levelStyle} opacity-60 cursor-default`
-                    : selected
-                    ? `${levelStyle} shadow-md scale-105`
-                    : 'bg-gray-100 border-gray-200 text-gray-500 hover:border-gray-300'
-                }`}
-              >
-                <span>{badge.emoji}</span>
-                <span>{badge.name}</span>
-                {earned && <span className="text-green-600">✓</span>}
-                {selected && !earned && <span>✓</span>}
-              </button>
-            )
-          })}
-        </div>
-        <p className="text-xs text-gray-400 mt-2">✓ = already awarded. Select new badges to award this lesson.</p>
+              return (
+                <button
+                  key={badge.id}
+                  type="button"
+                  onClick={() => toggleBadge(badge.id)}
+                  disabled={earned}
+                  className={`flex items-center gap-3 px-4 py-3 min-h-[56px] rounded-xl border-2 text-left transition-all ${
+                    earned
+                      ? 'bg-gray-100 border-gray-200 opacity-50 cursor-default'
+                      : selected
+                      ? `${levelStyle} shadow-md ring-2 ring-indigo-300`
+                      : 'bg-white border-gray-200 hover:border-indigo-300 hover:shadow-sm'
+                  }`}
+                >
+                  <span className="text-2xl leading-none flex-shrink-0" style={{ filter: earned ? 'grayscale(1)' : 'none' }}>
+                    {badge.emoji}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className={`block text-sm font-black leading-tight ${earned ? 'text-gray-400' : 'text-gray-800'}`}>
+                      {badge.name} {earned && '✓'}
+                    </span>
+                    <span className={`block text-xs leading-tight mt-0.5 ${earned ? 'text-gray-300' : 'text-gray-400'}`}>
+                      {badge.description}
+                    </span>
+                  </span>
+                  <span className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-sm font-black ${
+                    earned
+                      ? 'border-gray-300 text-gray-300'
+                      : selected
+                      ? 'bg-indigo-600 border-indigo-600 text-white'
+                      : 'border-gray-300 text-transparent'
+                  }`}>
+                    ✓
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Error */}

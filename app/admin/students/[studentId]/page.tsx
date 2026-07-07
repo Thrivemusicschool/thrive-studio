@@ -43,7 +43,7 @@ export default async function AdminStudentDetailPage({
       : Promise.resolve({ data: null }),
     supabase.from('lessons').select('id, lesson_date, goals_for_next_week, internal_note').eq('student_id', studentId).order('lesson_date', { ascending: false }),
     supabase.from('practice_sessions').select('id, start_time, duration_minutes').eq('student_id', studentId).order('start_time', { ascending: false }).limit(50),
-    supabase.from('badges').select('*').order('level'),
+    supabase.from('badges').select('*').order('sort_order'),
     supabase.from('student_badges').select('badge_id, awarded_at').eq('student_id', studentId).order('awarded_at', { ascending: false }),
   ])
 
@@ -55,7 +55,7 @@ export default async function AdminStudentDetailPage({
   const earned = earnedRes.data ?? []
 
   const day = journeyDay(student.journey_start_date)
-  const firstSongBadgeId = (badgesRes.data ?? []).find(b => b.name === 'First Song')?.id
+  const firstPieceBadgeId = (badgesRes.data ?? []).find(b => b.name === 'Piece Beginner')?.id
   const lastGoalLesson = lessons.find(l => l.goals_for_next_week)
 
   const flags = computeRiskFlags({
@@ -64,7 +64,7 @@ export default async function AdminStudentDetailPage({
     lastLessonDate: lessons[0]?.lesson_date ?? null,
     lastGoalDate: lastGoalLesson?.lesson_date ?? null,
     lastPracticeDate: practice[0]?.start_time ?? null,
-    hasFirstSongBadge: earned.some(e => e.badge_id === firstSongBadgeId),
+    hasFirstPieceBadge: earned.some(e => e.badge_id === firstPieceBadgeId),
   })
   const risk = riskLevel(flags)
 

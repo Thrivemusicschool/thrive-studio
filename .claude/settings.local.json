@@ -27,7 +27,9 @@
       "Bash(git add *)",
       "Bash(git commit -q -m 'Session 6: password-only login, referral card, instructor invites, admin lesson logging *)",
       "Bash(git push *)",
-      "Bash(git commit -q -m 'Admin: internal notes feed for last 7 days *)"
+      "Bash(git commit -q -m 'Admin: internal notes feed for last 7 days *)",
+      "Bash(perl -pi -e \"s/'First Song'/'Piece Beginner'/g; s/firstSongBadgeId/firstPieceBadgeId/g; s/firstSongStudents/firstPieceStudents/g; s/hasFirstSongBadge/hasFirstPieceBadge/g\" app/admin/page.tsx \"app/admin/students/[studentId]/page.tsx\")",
+      "Bash(git commit -q -m 'Badge system v2: 20 real badges, tiered levels, redesigned award UI *)"
     ]
   }
 }

@@ -7,9 +7,13 @@ const LEVEL_STYLE: Record<
   Badge['level'],
   { bg: string; border: string; text: string; shadow: string }
 > = {
-  spark:  { bg: 'bg-blue-100',   border: 'border-blue-300',   text: 'text-blue-700',   shadow: 'shadow-[3px_3px_0px_0px_#93c5fd]' },
-  groove: { bg: 'bg-purple-100', border: 'border-purple-300', text: 'text-purple-700', shadow: 'shadow-[3px_3px_0px_0px_#d8b4fe]' },
-  legend: { bg: 'bg-amber-100',  border: 'border-amber-300',  text: 'text-amber-700',  shadow: 'shadow-[3px_3px_0px_0px_#fcd34d]' },
+  spark:   { bg: 'bg-blue-100',    border: 'border-blue-300',    text: 'text-blue-700',    shadow: 'shadow-[3px_3px_0px_0px_#93c5fd]' },
+  groove:  { bg: 'bg-purple-100',  border: 'border-purple-300',  text: 'text-purple-700',  shadow: 'shadow-[3px_3px_0px_0px_#d8b4fe]' },
+  legend:  { bg: 'bg-amber-100',   border: 'border-amber-300',   text: 'text-amber-700',   shadow: 'shadow-[3px_3px_0px_0px_#fcd34d]' },
+  bronze:  { bg: 'bg-orange-100',  border: 'border-orange-300',  text: 'text-orange-800',  shadow: 'shadow-[3px_3px_0px_0px_#fdba74]' },
+  silver:  { bg: 'bg-slate-100',   border: 'border-slate-300',   text: 'text-slate-600',   shadow: 'shadow-[3px_3px_0px_0px_#cbd5e1]' },
+  gold:    { bg: 'bg-yellow-100',  border: 'border-yellow-400',  text: 'text-yellow-700',  shadow: 'shadow-[3px_3px_0px_0px_#facc15]' },
+  allstar: { bg: 'bg-fuchsia-100', border: 'border-fuchsia-300', text: 'text-fuchsia-700', shadow: 'shadow-[3px_3px_0px_0px_#f0abfc]' },
 }
 
 export default function BadgeWall({

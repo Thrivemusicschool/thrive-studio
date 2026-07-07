@@ -46,9 +46,9 @@ export default async function AdminPage() {
   const practice = practiceRes.data ?? []
   const invites = invitesRes.data ?? []
 
-  const firstSongBadgeId = (badgesRes.data ?? []).find(b => b.name === 'First Song')?.id
-  const firstSongStudents = new Set(
-    (studentBadgesRes.data ?? []).filter(sb => sb.badge_id === firstSongBadgeId).map(sb => sb.student_id)
+  const firstPieceBadgeId = (badgesRes.data ?? []).find(b => b.name === 'Piece Beginner')?.id
+  const firstPieceStudents = new Set(
+    (studentBadgesRes.data ?? []).filter(sb => sb.badge_id === firstPieceBadgeId).map(sb => sb.student_id)
   )
 
   const instructorName = new Map(instructors.map(i => [i.id, `${i.first_name} ${i.last_name}`]))
@@ -82,7 +82,7 @@ export default async function AdminPage() {
       lastLessonDate: lastLesson.get(s.id) ?? null,
       lastGoalDate: lastGoal.get(s.id) ?? null,
       lastPracticeDate: lastPractice.get(s.id) ?? null,
-      hasFirstSongBadge: firstSongStudents.has(s.id),
+      hasFirstPieceBadge: firstPieceStudents.has(s.id),
     })
     return { student: s, day, flags, risk: riskLevel(flags) }
   })

@@ -69,7 +69,7 @@ export default async function PortalPage() {
 
   const [studentsResult, badgesResult] = await Promise.all([
     supabase.from('students').select('*').eq('family_id', family.id).eq('active', true).order('created_at'),
-    supabase.from('badges').select('*').order('level'),
+    supabase.from('badges').select('*').order('sort_order'),
   ])
 
   const students = studentsResult.data ?? []
