@@ -17,6 +17,7 @@ interface Props {
   instructorId: string
   allBadges: Badge[]
   earnedBadgeIds: string[]
+  returnTo?: string
 }
 
 const LEVEL_COLORS: Record<string, string> = {
@@ -25,7 +26,7 @@ const LEVEL_COLORS: Record<string, string> = {
   legend: 'bg-amber-100 border-amber-300 text-amber-700',
 }
 
-export default function LessonForm({ studentId, instructorId, allBadges, earnedBadgeIds }: Props) {
+export default function LessonForm({ studentId, instructorId, allBadges, earnedBadgeIds, returnTo = '/instructor' }: Props) {
   const [lessonCompleted, setLessonCompleted] = useState(true)
   const [goalText, setGoalText] = useState('')
   const [internalNote, setInternalNote] = useState('')
@@ -88,7 +89,7 @@ export default function LessonForm({ studentId, instructorId, allBadges, earnedB
       }
     }
 
-    router.push('/instructor')
+    router.push(returnTo)
     router.refresh()
   }
 

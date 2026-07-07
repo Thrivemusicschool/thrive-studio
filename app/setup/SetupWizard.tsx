@@ -48,10 +48,15 @@ export default function SetupWizard({
   const [instrument, setInstrument] = useState(prefillInstrument ?? '')
   const [instructorId, setInstructorId] = useState('')
 
-  // Step 2 — parent
+  // Step 2 — account + parent
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [parentFirstName, setParentFirstName] = useState(existingFamily?.parent_first_name ?? '')
   const [parentLastName, setParentLastName] = useState(existingFamily?.parent_last_name ?? '')
   const [parentPhone, setParentPhone] = useState(existingFamily?.parent_phone ?? '')
+
+  // Users adding a second student already have a password
+  const needsPassword = !addingAnother
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -67,9 +72,30 @@ export default function SetupWizard({
   }
 
   async function complete(skipParent: boolean) {
+    if (needsPassword) {
+      if (password.length < 8) {
+        setError('Please choose a password of at least 8 characters.')
+        return
+      }
+      if (password !== confirmPassword) {
+        setError('Passwords don\'t match — please retype them.')
+        return
+      }
+    }
+
     setSaving(true)
     setError(null)
     const supabase = createClient()
+
+    // 0. Set their login password (invite links won't be needed again)
+    if (needsPassword) {
+      const { error: pwError } = await supabase.auth.updateUser({ password })
+      if (pwError) {
+        setError('Failed to set your password: ' + pwError.message)
+        setSaving(false)
+        return
+      }
+    }
 
     // 1. Claim the family role on the profile (no-op if already set)
     const { error: profileError } = await supabase
@@ -225,10 +251,32 @@ export default function SetupWizard({
         {step === 2 && (
           <div className="bg-white rounded-3xl shadow-sm border border-orange-100 p-6">
             <div className="text-4xl mb-3">👋</div>
-            <h1 className="text-2xl font-black text-gray-800 mb-1">Parent or guardian info</h1>
+            <h1 className="text-2xl font-black text-gray-800 mb-1">Set up your account</h1>
             <p className="text-gray-500 text-sm mb-6">So we know who to reach about {firstName.trim() || 'your student'}.</p>
 
             <div className="space-y-4">
+              {needsPassword && (
+                <div className="bg-orange-50 rounded-2xl p-4 space-y-3">
+                  <p className="text-sm font-black text-gray-700">🔑 Create a password</p>
+                  <p className="text-xs text-gray-500 -mt-2">You&apos;ll use your email and this password to log in from now on.</p>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Password (8+ characters)"
+                    autoComplete="new-password"
+                    className={inputClass}
+                  />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder="Retype password"
+                    autoComplete="new-password"
+                    className={inputClass}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-black text-gray-700 mb-1">First name</label>

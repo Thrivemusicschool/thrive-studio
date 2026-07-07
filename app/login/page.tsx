@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-type Mode = 'password' | 'magic' | 'forgot'
+type Mode = 'password' | 'forgot'
 
 export default function LoginPage() {
   const [mode, setMode] = useState<Mode>('password')
@@ -50,26 +50,6 @@ export default function LoginPage() {
     router.push(`/login/confirm?email=${encodeURIComponent(email)}`)
   }
 
-  async function handleMagicLink(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-    })
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-      return
-    }
-
-    router.push(`/login/confirm?email=${encodeURIComponent(email)}`)
-  }
-
   function switchMode(m: Mode) {
     setMode(m)
     setError(null)
@@ -98,17 +78,6 @@ export default function LoginPage() {
               }`}
             >
               Sign in
-            </button>
-            <button
-              type="button"
-              onClick={() => switchMode('magic')}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
-                mode === 'magic'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Email link
             </button>
             <button
               type="button"
@@ -146,28 +115,6 @@ export default function LoginPage() {
                 No password?{' '}
                 <button type="button" onClick={() => switchMode('forgot')} className="text-indigo-600 hover:underline">
                   Reset it
-                </button>
-              </p>
-            </form>
-          )}
-
-          {mode === 'magic' && (
-            <form onSubmit={handleMagicLink} className="space-y-4">
-              <div>
-                <label htmlFor="email-magic" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input id="email-magic" type="email" required autoComplete="email" value={email}
-                  onChange={e => setEmail(e.target.value)} placeholder="you@example.com"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm" />
-              </div>
-              {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
-              <button type="submit" disabled={loading || !email}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-medium py-2.5 rounded-lg transition-colors text-sm">
-                {loading ? 'Sending…' : 'Send me a login link'}
-              </button>
-              <p className="text-center text-xs text-gray-400">
-                Have a password?{' '}
-                <button type="button" onClick={() => switchMode('password')} className="text-indigo-600 hover:underline">
-                  Sign in instead
                 </button>
               </p>
             </form>

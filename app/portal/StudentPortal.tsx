@@ -66,6 +66,40 @@ function ThirtyDayGoal({ goal }: { goal: import('./types').GoalData }) {
   )
 }
 
+function ReferralCard({ familyName }: { familyName: string }) {
+  const [copied, setCopied] = useState(false)
+  const message = `We love Thrive Music School in Apopka! 🎵 Mention the ${familyName} family when you enroll and we BOTH get a FREE month of lessons.`
+
+  async function share() {
+    if (typeof navigator.share === 'function') {
+      try {
+        await navigator.share({ text: message })
+        return
+      } catch {
+        // user closed the share sheet — fall through to copy
+      }
+    }
+    await navigator.clipboard.writeText(message)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+
+  return (
+    <div className="bg-white rounded-2xl border-2 border-teal-200 p-5 shadow-[4px_4px_0px_0px_#ccfbf1]">
+      <h2 className="font-black text-gray-800 text-base mb-1">🎁 Give a month, get a month</h2>
+      <p className="text-gray-500 text-sm mb-4">
+        Invite a friend to Thrive Music School — when they enroll, you both get a free month of lessons!
+      </p>
+      <button
+        onClick={share}
+        className="w-full min-h-[48px] bg-teal-500 hover:bg-teal-600 text-white font-black text-base rounded-xl transition-colors shadow-sm"
+      >
+        {copied ? '✓ Copied — paste it to a friend!' : '💌 Invite a Friend'}
+      </button>
+    </div>
+  )
+}
+
 export default function StudentPortal({
   students,
   allBadges,
@@ -250,6 +284,9 @@ export default function StudentPortal({
 
         {/* ── 6. Badge Wall ── */}
         <BadgeWall allBadges={allBadges} earnedBadgeIds={student.earnedBadgeIds} />
+
+        {/* ── 7. Refer a friend ── */}
+        <ReferralCard familyName={student.lastName} />
 
         <div className="text-center pt-4 space-y-3">
           <a

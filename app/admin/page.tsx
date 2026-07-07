@@ -31,7 +31,7 @@ export default async function AdminPage() {
   const [studentsRes, instructorsRes, lessonsRes, practiceRes, badgesRes, studentBadgesRes, invitesRes] =
     await Promise.all([
       supabase.from('students').select('id, first_name, last_name, instrument, instructor_id, journey_start_date, created_at').eq('active', true).order('first_name'),
-      supabase.from('instructors').select('id, first_name, last_name, active').order('first_name'),
+      supabase.from('instructors').select('id, first_name, last_name, email, active, profile_id').order('first_name'),
       supabase.from('lessons').select('student_id, lesson_date, goals_for_next_week').order('lesson_date', { ascending: false }),
       supabase.from('practice_sessions').select('student_id, start_time').gte('start_time', fourteenDaysAgo.toISOString()),
       supabase.from('badges').select('id, name'),

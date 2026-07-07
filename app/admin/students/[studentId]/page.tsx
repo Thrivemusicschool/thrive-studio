@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { computeRiskFlags, riskLevel } from '@/lib/risk'
+import LessonForm from '@/app/instructor/[studentId]/LessonForm'
 
 function journeyDay(journeyStartDate: string | null): number | null {
   if (!journeyStartDate) return null
@@ -42,7 +43,7 @@ export default async function AdminStudentDetailPage({
       : Promise.resolve({ data: null }),
     supabase.from('lessons').select('id, lesson_date, goals_for_next_week, internal_note').eq('student_id', studentId).order('lesson_date', { ascending: false }),
     supabase.from('practice_sessions').select('id, start_time, duration_minutes').eq('student_id', studentId).order('start_time', { ascending: false }).limit(50),
-    supabase.from('badges').select('id, name, emoji'),
+    supabase.from('badges').select('*').order('level'),
     supabase.from('student_badges').select('badge_id, awarded_at').eq('student_id', studentId).order('awarded_at', { ascending: false }),
   ])
 
@@ -113,6 +114,29 @@ export default async function AdminStudentDetailPage({
             </ul>
           )}
         </section>
+
+        {/* ── Log a lesson on the instructor's behalf ── */}
+        {student.instructor_id ? (
+          <section className="bg-white rounded-2xl border-2 border-indigo-200 p-6">
+            <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+              Log a Lesson
+            </h2>
+            <p className="text-xs text-gray-400 mb-6">
+              Saved as {instructor ? `${instructor.first_name} ${instructor.last_name}` : 'the assigned instructor'} — use this when the instructor can&apos;t log it themselves.
+            </p>
+            <LessonForm
+              studentId={studentId}
+              instructorId={student.instructor_id}
+              allBadges={badgesRes.data ?? []}
+              earnedBadgeIds={earned.map(e => e.badge_id)}
+              returnTo={`/admin/students/${studentId}`}
+            />
+          </section>
+        ) : (
+          <section className="bg-yellow-50 rounded-2xl border border-yellow-200 p-6 text-sm text-yellow-800">
+            No instructor assigned — assign one before logging lessons for this student.
+          </section>
+        )}
 
         {/* ── Lesson history (including internal notes) ── */}
         <section className="bg-white rounded-2xl border border-gray-200 p-6">

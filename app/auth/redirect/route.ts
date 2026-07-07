@@ -23,6 +23,16 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/setup`)
   }
 
+  // No role yet? If an instructor record was created for this email,
+  // claim it (links profile + sets role) and go to the instructor view.
+  if (!profile.role) {
+    const { data: claimed } = await supabase.rpc('claim_instructor')
+    if (claimed) {
+      // First login: have them set a password before anything else
+      return NextResponse.redirect(`${origin}/auth/set-password`)
+    }
+  }
+
   switch (profile.role) {
     case 'admin':
       return NextResponse.redirect(`${origin}/admin`)

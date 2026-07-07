@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -8,13 +9,18 @@ interface Instructor {
   id: string
   first_name: string
   last_name: string
+  email: string | null
   active: boolean
+  profile_id: string | null
 }
 
 export default function ManageInstructors({ instructors }: { instructors: Instructor[] }) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [email, setEmail] = useState('')
+  const [adding, setAdding] = useState(false)
+  const [busyId, setBusyId] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
@@ -24,25 +30,50 @@ export default function ManageInstructors({ instructors }: { instructors: Instru
       setError('Enter a first and last name.')
       return
     }
-    setBusy(true)
+    setAdding(true)
     setError(null)
+    setNotice(null)
     const supabase = createClient()
+    const cleanEmail = email.trim().toLowerCase()
+
     const { error: insertError } = await supabase.from('instructors').insert({
       first_name: firstName.trim(),
       last_name: lastName.trim(),
+      email: cleanEmail || null,
     })
     if (insertError) {
       setError('Failed to add instructor: ' + insertError.message)
-    } else {
-      setFirstName('')
-      setLastName('')
-      router.refresh()
+      setAdding(false)
+      return
     }
-    setBusy(false)
+
+    // Email them a setup link — first login claims their instructor account
+    if (cleanEmail) {
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email: cleanEmail,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/auth/redirect`,
+        },
+      })
+      if (otpError) {
+        setError('Instructor added, but the invite email failed: ' + otpError.message)
+        setAdding(false)
+        router.refresh()
+        return
+      }
+      setNotice(`Invite sent to ${cleanEmail}.`)
+    }
+
+    setFirstName('')
+    setLastName('')
+    setEmail('')
+    setAdding(false)
+    router.refresh()
   }
 
   async function toggleActive(instructor: Instructor) {
-    setBusy(true)
+    setBusyId(instructor.id)
     setError(null)
     const supabase = createClient()
     const { error: updateError } = await supabase
@@ -50,8 +81,8 @@ export default function ManageInstructors({ instructors }: { instructors: Instru
       .update({ active: !instructor.active })
       .eq('id', instructor.id)
     if (updateError) setError('Failed to update instructor: ' + updateError.message)
-    else router.refresh()
-    setBusy(false)
+    router.refresh()
+    setBusyId(null)
   }
 
   return (
@@ -63,28 +94,44 @@ export default function ManageInstructors({ instructors }: { instructors: Instru
       ) : (
         <ul className="space-y-2 mb-5">
           {instructors.map(i => (
-            <li key={i.id} className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 text-sm">
-              <span className={`font-bold ${i.active ? 'text-gray-700' : 'text-gray-400 line-through'}`}>
-                {i.first_name} {i.last_name}
-                {!i.active && <span className="ml-2 no-underline text-xs font-medium text-gray-400">(inactive)</span>}
-              </span>
+            <li key={i.id} className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 text-sm gap-3">
+              <div className="min-w-0">
+                {i.active ? (
+                  <Link
+                    href={`/admin/instructors/${i.id}`}
+                    className="font-bold text-indigo-700 hover:text-indigo-900 hover:underline"
+                  >
+                    {i.first_name} {i.last_name} →
+                  </Link>
+                ) : (
+                  <span className="font-bold text-gray-400 line-through">
+                    {i.first_name} {i.last_name}
+                  </span>
+                )}
+                <div className="text-xs text-gray-400 truncate">
+                  {!i.active && 'Inactive · '}
+                  {i.email ?? 'No email on file'}
+                  {i.email && !i.profile_id && ' · hasn’t logged in yet'}
+                </div>
+              </div>
               <button
                 onClick={() => toggleActive(i)}
-                disabled={busy}
-                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors ${
+                disabled={busyId === i.id}
+                className={`flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors disabled:opacity-40 ${
                   i.active
                     ? 'border-red-200 text-red-600 hover:bg-red-50'
                     : 'border-green-200 text-green-600 hover:bg-green-50'
                 }`}
               >
-                {i.active ? 'Deactivate' : 'Reactivate'}
+                {busyId === i.id ? '…' : i.active ? 'Deactivate' : 'Reactivate'}
               </button>
             </li>
           ))}
         </ul>
       )}
 
-      <form onSubmit={addInstructor} className="space-y-3">
+      <form onSubmit={addInstructor} className="space-y-3 border-t border-gray-100 pt-4">
+        <p className="text-sm font-black text-gray-700">Add an instructor</p>
         <div className="grid grid-cols-2 gap-3">
           <input
             type="text"
@@ -101,13 +148,21 @@ export default function ManageInstructors({ instructors }: { instructors: Instru
             className="px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-indigo-400 focus:outline-none text-sm text-gray-800 placeholder-gray-400"
           />
         </div>
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="Email (optional — sends them a login link)"
+          className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-indigo-400 focus:outline-none text-sm text-gray-800 placeholder-gray-400"
+        />
         {error && <p className="text-xs text-red-600">{error}</p>}
+        {notice && <p className="text-xs text-green-600">{notice}</p>}
         <button
           type="submit"
-          disabled={busy}
+          disabled={adding}
           className="w-full min-h-[44px] bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-black text-sm rounded-xl transition-colors"
         >
-          + Add Instructor
+          {adding ? 'Adding…' : '+ Add Instructor'}
         </button>
       </form>
     </section>

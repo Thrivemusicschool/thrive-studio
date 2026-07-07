@@ -10,7 +10,23 @@
       "Bash(sw_vers)",
       "Bash(curl -fsSL https://fnm.vercel.app/install)",
       "Bash(bash)",
-      "Bash(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh)"
+      "Bash(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh)",
+      "Bash(git -C /Users/miklarson/thrive-studio log --oneline)",
+      "Bash(git -C /Users/miklarson/thrive-studio remote -v)",
+      "mcp__claude-in-chrome__browser_batch",
+      "mcp__claude-in-chrome__computer",
+      "mcp__claude-in-chrome__navigate",
+      "Bash(cat /Users/miklarson/thrive-studio/.claude/settings.local.json 2>/dev/null; echo \"---\"; cat /Users/miklarson/.claude/settings.json 2>/dev/null)",
+      "Bash(dig NS thrivemusicschool.com +short)",
+      "Bash(whois thrivemusicschool.com)",
+      "Bash(dig MX send.thrivemusicschool.com +short)",
+      "Bash(dig TXT send.thrivemusicschool.com +short)",
+      "Bash(dig TXT resend._domainkey.thrivemusicschool.com +short)",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'Session 6: password-only login, referral card, instructor invites, admin lesson logging *)",
+      "Bash(git push *)"
     ]
   }
 }
