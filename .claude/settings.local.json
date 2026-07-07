@@ -40,7 +40,16 @@
       "Bash(sips -g pixelWidth -g pixelHeight /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/thrive-logo.png)",
       "Bash(sips -s format bmp /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/thrive-logo.png --out /private/tmp/claude-501/-Users-miklarson-thrive-studio/69519c97-4b3b-45cf-aaf8-1a7c3a5f95fc/scratchpad/logo.bmp)",
       "Bash(python3 -)",
-      "Bash(git commit -q -m 'Branding: Thrive logo, brand navy/orange palette, Fredoka+Inter fonts, T-note app icon, PWA manifest *)"
+      "Bash(git commit -q -m 'Branding: Thrive logo, brand navy/orange palette, Fredoka+Inter fonts, T-note app icon, PWA manifest *)",
+      "Bash(python3 -c \"import time; time.sleep\\(50\\)\")",
+      "Bash(curl -s -o /dev/null -w \"icon.svg: %{http_code}\\\\n\" https://thrive-studio.vercel.app/icon.svg)",
+      "Bash(curl -s -o /dev/null -w \"manifest: %{http_code}\\\\n\" https://thrive-studio.vercel.app/manifest.webmanifest)",
+      "Bash(curl -s -o /dev/null -w \"apple-icon: %{http_code}\\\\n\" https://thrive-studio.vercel.app/apple-icon.png)",
+      "Bash(curl -s -o /dev/null -w \"logo png: %{http_code}\\\\n\" https://thrive-studio.vercel.app/thrive-logo.png)",
+      "Bash(curl -s https://thrive-studio.vercel.app/login)",
+      "Bash(git commit -q -m 'Make manifest and app icons public in auth proxy *)",
+      "Bash(python3 -c \"import time; time.sleep\\(55\\)\")",
+      "Bash(curl -s -o /dev/null -w \"apple-icon: %{http_code}\\\\n\" \"https://thrive-studio.vercel.app/apple-icon\")"
     ]
   }
 }
