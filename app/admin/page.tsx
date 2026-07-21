@@ -28,7 +28,7 @@ export default async function AdminPage() {
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-  const [studentsRes, instructorsRes, lessonsRes, practiceRes, badgesRes, studentBadgesRes, invitesRes, notesRes] =
+  const [studentsRes, instructorsRes, lessonsRes, practiceRes, badgesRes, studentBadgesRes, invitesRes, notesRes, feedbackRes] =
     await Promise.all([
       supabase.from('students').select('id, first_name, last_name, instrument, instructor_id, journey_start_date, created_at').eq('active', true).order('first_name'),
       supabase.from('instructors').select('id, first_name, last_name, email, active, profile_id').order('first_name'),
@@ -38,6 +38,7 @@ export default async function AdminPage() {
       supabase.from('student_badges').select('student_id, badge_id'),
       supabase.from('invites').select('id, email, student_first_name, created_at').eq('used', false).order('created_at', { ascending: false }),
       supabase.from('lessons').select('id, student_id, instructor_id, internal_note, lesson_date, created_at').not('internal_note', 'is', null).gte('created_at', sevenDaysAgo.toISOString()).order('created_at', { ascending: false }).limit(25),
+      supabase.from('feedback').select('id, email, kind, message, page, created_at').order('created_at', { ascending: false }).limit(10),
     ])
 
   const students = studentsRes.data ?? []
@@ -53,6 +54,7 @@ export default async function AdminPage() {
 
   const instructorName = new Map(instructors.map(i => [i.id, `${i.first_name} ${i.last_name}`]))
   const recentNotes = notesRes.data ?? []
+  const recentFeedback = feedbackRes.data ?? []
 
   // Last lesson + last goal date per student (lessons are sorted desc)
   const lastLesson = new Map<string, string>()
@@ -86,6 +88,17 @@ export default async function AdminPage() {
     })
     return { student: s, day, flags, risk: riskLevel(flags) }
   })
+
+  // ── Milestone watch: students inside a journey milestone window ──
+  const MILESTONES = [
+    { day: 30, from: 28, to: 35, label: 'Month 1 complete', sub: 'I can play something', emoji: '🌱' },
+    { day: 60, from: 58, to: 65, label: 'Month 2 complete', sub: 'I can practice & improve', emoji: '🌿' },
+    { day: 90, from: 88, to: 95, label: '90-Day Journey complete', sub: 'I can perform & belong', emoji: '🏆' },
+  ]
+  const milestoneGroups = MILESTONES.map(m => ({
+    ...m,
+    students: rows.filter(r => r.day !== null && r.day >= m.from && r.day <= m.to),
+  })).filter(g => g.students.length > 0)
 
   // ── Stats ──
   const totalActive = students.length
@@ -143,6 +156,47 @@ export default async function AdminPage() {
             </div>
           ))}
         </div>
+
+        {/* ── Milestone watch ── */}
+        <section className="bg-white rounded-2xl border-2 border-orange-200 p-6">
+          <h2 className="text-lg font-black text-gray-800 mb-1">🎉 Milestone Watch</h2>
+          <p className="text-xs text-gray-400 mb-4">
+            Students hitting a journey milestone right now — a great moment to celebrate or check in.
+          </p>
+          {milestoneGroups.length === 0 ? (
+            <p className="text-gray-400 text-sm">No students are at a milestone this week.</p>
+          ) : (
+            <div className="space-y-5">
+              {milestoneGroups.map(group => (
+                <div key={group.day}>
+                  <p className="text-xs font-black text-orange-600 uppercase tracking-wide mb-2">
+                    {group.emoji} Day {group.day} · {group.label}
+                    <span className="text-gray-400 font-bold normal-case tracking-normal"> — “{group.sub}”</span>
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    {group.students.map(({ student: s, day }) => (
+                      <Link
+                        key={s.id}
+                        href={`/admin/students/${s.id}`}
+                        className="flex items-center justify-between gap-3 bg-orange-50 hover:bg-orange-100 rounded-xl px-4 py-3 transition-colors"
+                      >
+                        <span className="min-w-0">
+                          <span className="block text-sm font-black text-gray-800 truncate">
+                            {s.first_name} {s.last_name}
+                          </span>
+                          <span className="block text-xs text-gray-500 truncate">
+                            {s.instructor_id ? instructorName.get(s.instructor_id) ?? 'Unassigned' : 'Unassigned'}
+                          </span>
+                        </span>
+                        <span className="text-sm font-black text-orange-600 flex-shrink-0">Day {day}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
         {/* ── Internal notes feed (last 7 days) ── */}
         <section className="bg-white rounded-2xl border-2 border-dashed border-red-200 p-6">
@@ -229,6 +283,34 @@ export default async function AdminPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+        </section>
+
+        {/* ── Feedback inbox ── */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="text-lg font-black text-gray-800 mb-1">💬 Feedback Inbox</h2>
+          <p className="text-xs text-gray-400 mb-4">
+            Questions and problems sent from inside the app. Also emailed to you.
+          </p>
+          {recentFeedback.length === 0 ? (
+            <p className="text-gray-400 text-sm">No feedback yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {recentFeedback.map(f => (
+                <div key={f.id} className="bg-gray-50 rounded-xl px-4 py-3">
+                  <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1">
+                    <span className="text-sm font-black text-gray-800">
+                      {f.email}
+                      <span className="text-gray-400 font-medium"> · {f.kind}</span>
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {fmtDate(f.created_at)} · {f.page}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{f.message}</p>
+                </div>
+              ))}
             </div>
           )}
         </section>

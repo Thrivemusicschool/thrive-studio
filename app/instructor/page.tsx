@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from '@/components/LogoutButton'
+import FeedbackWidget from '@/components/FeedbackWidget'
 
 function dotColor(lastLessonDate: string | null): 'green' | 'yellow' | 'red' {
   if (!lastLessonDate) return 'red'
@@ -166,6 +167,10 @@ export default async function InstructorPage() {
             })}
           </div>
         )}
+
+        <div className="text-center pt-8">
+          <FeedbackWidget tone="cool" />
+        </div>
       </main>
     </div>
   )

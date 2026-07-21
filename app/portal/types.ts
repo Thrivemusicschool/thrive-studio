@@ -11,6 +11,12 @@ export interface Badge {
   description: string
 }
 
+export interface LeaderboardRow {
+  studentId: string
+  displayName: string
+  totalMinutes: number
+}
+
 export interface PracticeSessionData {
   id: string
   start_time: string

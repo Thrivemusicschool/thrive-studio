@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import StudentPortal from './StudentPortal'
-import type { Badge, InstrumentData, PracticeSessionData, StudentData } from './types'
+import type { Badge, InstrumentData, LeaderboardRow, PracticeSessionData, StudentData } from './types'
 
 function calcPracticeStreak(sessions: Array<{ start_time: string }>): number {
   if (!sessions.length) return 0
@@ -64,16 +64,25 @@ export default async function PortalPage() {
 
   const sixtyDaysAgo = new Date()
   sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60)
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-  const [studentsResult, badgesResult] = await Promise.all([
+  const [studentsResult, badgesResult, leaderboardResult] = await Promise.all([
     supabase.from('students').select('*').eq('family_id', family.id).eq('active', true).order('created_at'),
     supabase.from('badges').select('*').order('sort_order'),
+    supabase.rpc('monthly_leaderboard'),
   ])
 
   const students = studentsResult.data ?? []
   const allBadges = (badgesResult.data ?? []) as Badge[]
+
+  const leaderboard: LeaderboardRow[] = (leaderboardResult.data ?? []).map(
+    (r: { student_id: string; display_name: string; total_minutes: number }) => ({
+      studentId: r.student_id,
+      displayName: r.display_name,
+      totalMinutes: Number(r.total_minutes),
+    })
+  )
 
   const studentDataList: StudentData[] = await Promise.all(
     students.map(async student => {
@@ -133,7 +142,7 @@ export default async function PortalPage() {
         }
       }
 
-      const recentSessions = practiceSessions.filter(s => new Date(s.start_time) >= sevenDaysAgo) as PracticeSessionData[]
+      const recentSessions = practiceSessions.filter(s => new Date(s.start_time) >= thirtyDaysAgo) as PracticeSessionData[]
 
       // Resolve active 30-day goal
       const goalRow = goalsResult.data?.[0] ?? null
@@ -174,5 +183,5 @@ export default async function PortalPage() {
     })
   )
 
-  return <StudentPortal students={studentDataList} allBadges={allBadges} />
+  return <StudentPortal students={studentDataList} allBadges={allBadges} leaderboard={leaderboard} />
 }

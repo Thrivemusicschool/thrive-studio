@@ -21,6 +21,7 @@ const ART: Record<string, string> = {
   '90 Day Badge': 'ninety-day.svg',
   'Building the Band': 'building-the-band.svg',
   'Student of the Month': 'student-of-the-month.svg',
+  'Chart Topper': 'chart-topper.svg',
 }
 
 export function badgeImageUrl(name: string): string | null {

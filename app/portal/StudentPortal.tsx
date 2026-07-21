@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import PracticeTimer from './PracticeTimer'
 import BadgeWall from './BadgeWall'
+import Leaderboard from './Leaderboard'
 import LogoutButton from '@/components/LogoutButton'
-import type { Badge, StudentData } from './types'
+import FeedbackWidget from '@/components/FeedbackWidget'
+import type { Badge, LeaderboardRow, StudentData } from './types'
 
 const PHASES = [
   { label: 'Month 1', sub: 'I can play something' },
@@ -69,9 +71,11 @@ function ThirtyDayGoal({ goal }: { goal: import('./types').GoalData }) {
 export default function StudentPortal({
   students,
   allBadges,
+  leaderboard,
 }: {
   students: StudentData[]
   allBadges: Badge[]
+  leaderboard: LeaderboardRow[]
 }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -248,7 +252,10 @@ export default function StudentPortal({
         {/* ── 5. Practice Timer ── */}
         <PracticeTimer studentId={student.id} recentSessions={student.recentSessions} />
 
-        {/* ── 6. Badge Wall ── */}
+        {/* ── 6. Leaderboard ── */}
+        <Leaderboard rows={leaderboard} currentStudentId={student.id} />
+
+        {/* ── 7. Badge Wall ── */}
         <BadgeWall allBadges={allBadges} earnedBadgeIds={student.earnedBadgeIds} />
 
         <div className="text-center pt-4 space-y-3">
@@ -258,6 +265,7 @@ export default function StudentPortal({
           >
             ➕ Add another student
           </a>
+          <FeedbackWidget tone="warm" />
           <LogoutButton />
         </div>
       </div>
